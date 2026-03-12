@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>UniNotes — Academic Resource Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="style.css"/>
+
+</head>
+<body>
+
+<!-- ═══════════════ LOGIN PAGE ═══════════════ -->
+<div id="loginPage" class="page active">
+  <div class="login-card">
+    <div class="logo">
+      <div class="logo-icon">📚</div>
+      <div class="logo-text">Uni<span>Notes</span></div>
+    </div>
+    <div class="login-title" id="authTitle">Welcome back</div>
+    <div class="login-sub" id="authSub">Your academic resource hub — everything in one place.</div>
+
+    <!-- Role tabs -->
+    <div class="role-tabs">
+      <button class="role-tab active" onclick="setRole('student')">🎓 Student</button>
+      <button class="role-tab" onclick="setRole('teacher')">👨‍🏫 Teacher</button>
+    </div>
+
+    <!-- Sign In form -->
+    <div id="signInForm">
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="emailInput" placeholder="you@university.edu"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="passInput" placeholder="••••••••"/>
+      </div>
+      <button class="btn-primary" onclick="doLogin()">Sign In →</button>
+      <div class="demo-hint" style="margin-top:16px">
+        Don't have an account? <b id="switchToSignup" style="color:var(--accent);cursor:pointer" onclick="toggleAuthMode('signup')">Create one →</b>
+      </div>
+    </div>
+
+    <!-- Sign Up form -->
+    <div id="signUpForm" style="display:none">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="signupName" placeholder="Your full name"/>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="signupEmail" placeholder="you@university.edu"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="signupPass" placeholder="Min. 6 characters"/>
+      </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <input type="password" id="signupPass2" placeholder="Re-enter password"/>
+      </div>
+      <div id="signupRoleNote" style="margin-bottom:16px;padding:10px 14px;border-radius:10px;background:rgba(79,142,247,.08);border:1px solid rgba(79,142,247,.2);font-size:13px;color:var(--muted)">
+        Creating account as: <b id="signupRoleLabel" style="color:var(--accent)">Student</b>
+      </div>
+      <button class="btn-primary" onclick="doSignUp()">Create Account →</button>
+      <div class="demo-hint" style="margin-top:16px">
+        Already have an account? <b style="color:var(--accent);cursor:pointer" onclick="toggleAuthMode('signin')">Sign in →</b>
+      </div>
+    </div>
+
+    <div id="authError" style="display:none;margin-top:14px;padding:10px 14px;border-radius:10px;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:var(--red);font-size:13px"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ STUDENT DASHBOARD ═══════════════ -->
+<div id="studentPage" class="page">
+  <nav class="navbar">
+    <div class="nav-logo">
+      <div class="logo-icon">📚</div>
+      <span>Uni<b>Notes</b></span>
+    </div>
+    <div class="nav-right">
+      <span class="nav-badge badge-student">🎓 <span id="studentNavName">Student</span></span>
+      <button class="btn-logout" onclick="logout()">Sign Out</button>
+    </div>
+  </nav>
+  <div class="dash-body">
+    <div class="sidebar">
+      <div class="sidebar-section">Navigation</div>
+      <div class="sidebar-item active" onclick="showStudentSection('home')"><span class="icon">🏠</span> Home</div>
+      <div class="sidebar-item" onclick="showStudentSection('courses')"><span class="icon">📖</span> My Courses</div>
+      <div class="sidebar-item" onclick="showStudentSection('notes')"><span class="icon">📄</span> All Notes</div>
+      <div class="sidebar-item" onclick="showStudentSection('assignments')"><span class="icon">📝</span> Assignments</div>
+      <div class="sidebar-section">Info</div>
+      <div class="sidebar-item" onclick="showStudentSection('announcements')"><span class="icon">📢</span> Announcements</div>
+    </div>
+    <div class="main-content" id="studentContent">
+      <!-- injected by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ TEACHER DASHBOARD ═══════════════ -->
+<div id="teacherPage" class="page">
+  <nav class="navbar">
+    <div class="nav-logo">
+      <div class="logo-icon">📚</div>
+      <span>Uni<b>Notes</b></span>
+    </div>
+    <div class="nav-right">
+      <span class="nav-badge badge-teacher">👨‍🏫 <span id="teacherNavName">Teacher</span></span>
+      <button class="btn-logout" onclick="logout()">Sign Out</button>
+    </div>
+  </nav>
+  <div class="dash-body">
+    <div class="sidebar">
+      <div class="sidebar-section">Navigation</div>
+      <div class="sidebar-item active" onclick="showTeacherSection('home')"><span class="icon">🏠</span> Dashboard</div>
+      <div class="sidebar-item" onclick="showTeacherSection('upload')"><span class="icon">⬆️</span> Upload Material</div>
+      <div class="sidebar-item" onclick="showTeacherSection('manage')"><span class="icon">🗂️</span> Manage Files</div>
+      <div class="sidebar-item" onclick="showTeacherSection('announce')"><span class="icon">📢</span> Announcements</div>
+    </div>
+    <div class="main-content" id="teacherContent">
+      <!-- injected by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"><span class="toast-icon">✅</span><span id="toastMsg"></span></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
